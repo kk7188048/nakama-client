@@ -106,7 +106,7 @@ export const Game = () => {
         isMyTurn={isMyTurn}
       />
       <div className="game-status">
-        {isMyTurn ? '✨ Your Turn' : '⏳ Opponent\'s Turn'}
+        {isMyTurn ? 'Your Turn' : 'Opponent\'s Turn'}
       </div>
     </div>
   );

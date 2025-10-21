@@ -88,10 +88,8 @@ export const Menu = () => {
         }
       });
 
-      // Queue into the matchmaker. This returns a ticket, not a matchId.
       const { ticket } = await nakamaService.findMatch();
       console.log('Matchmaking ticket:', ticket);
-      // Now wait for server to notify a match via onMatchFound callback (or Nakama onmatchmakermatched)
     } catch (error) {
       console.error('Error finding match:', error);
       alert('Failed to find match');
@@ -104,13 +102,13 @@ export const Menu = () => {
       
       <div className="menu-buttons">
         <button className="primary-btn" onClick={handleCreateMatch}>
-          🎮 Create Game
+          Create Game
         </button>
         <button className="primary-btn" onClick={handleFindMatch}>
-          🔍 Find Game
+          Find Game
         </button>
         <button className="secondary-btn" onClick={() => navigate('/leaderboard')}>
-          🏆 Leaderboard
+          Leaderboard
         </button>
       </div>
     </div>
