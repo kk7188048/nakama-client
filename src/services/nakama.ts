@@ -24,7 +24,7 @@ class NakamaService {
   currentMatchTicket: string | null = null;
   private socketConnecting: Promise<Socket> | null = null;
   private matchmakingPending: Promise<{ ticket: string }> | null = null;
-  
+
   private matchFoundCb: ((matchId: string) => void) | null = null;
   private matchDataCb: ((matchData: any) => void) | null = null;
   private matchPresenceCb: ((joins: any[], leaves: any[]) => void) | null = null;
@@ -48,12 +48,12 @@ class NakamaService {
     try {
       const authToken = localStorage.getItem(SESSION_TOKEN_KEY);
       const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY);
-      
+
       if (authToken && refreshToken) {
         this.session = Session.restore(authToken, refreshToken);
-        
+
         const nowPlusFiveMinutes = Date.now() + (5 * 60 * 1000);
-        
+
         if (this.session.isexpired(nowPlusFiveMinutes / 1000)) {
           console.log('⚠️ Session expired or expiring soon, will need refresh');
           this.session = null;
@@ -106,7 +106,7 @@ class NakamaService {
     }
 
     const nowPlusFiveMinutes = Date.now() + (5 * 60 * 1000);
-    
+
     if (this.session.isexpired(nowPlusFiveMinutes / 1000)) {
       return await this.refreshSession();
     }
@@ -119,30 +119,30 @@ class NakamaService {
   }
 
   isAuthenticated(): boolean {
-    return this.session !== null && !this.session.isexpired();
+    return this.session !== null && !this.session.isexpired(Date.now() / 1000);
   }
 
   async authenticate(username: string): Promise<Session> {
     try {
       const deviceId = `device-${username}-${Date.now()}`.substring(0, 128);
-      
+
       console.log('Authenticating with device ID:', deviceId);
       console.log('Client config:', { HOST, PORT, USE_SSL });
-      
+
       this.session = await this.client.authenticateDevice(
         deviceId,
         true,
         username
       );
-      
+
       this.saveSession(this.session);
-      
+
       console.log('Authenticated successfully:', {
         userId: this.session.user_id,
         username: this.session.username,
-        expiresAt: new Date(this.session.expires_at * 1000).toISOString()
+        expiresAt: this.session?.expires_at ? new Date(this.session.expires_at * 1000).toISOString() : undefined
       });
-      
+
       return this.session;
     } catch (error: any) {
       console.error('Authentication failed:', error);
@@ -196,13 +196,13 @@ class NakamaService {
             opCode: matchData.op_code,
             data: matchData.data
           });
-          
+
           if (this.matchDataCb) {
             try {
               const decoder = new TextDecoder();
               const jsonStr = decoder.decode(matchData.data);
               const data = JSON.parse(jsonStr);
-              
+
               this.matchDataCb({
                 opCode: matchData.op_code,
                 data: data,
@@ -216,7 +216,7 @@ class NakamaService {
 
         socket.onmatchpresence = (presenceEvent: any) => {
           console.log('👥 Match presence update:', presenceEvent);
-          
+
           if (this.matchPresenceCb) {
             this.matchPresenceCb(
               presenceEvent.joins || [],
@@ -257,19 +257,20 @@ class NakamaService {
 
   async createMatch(): Promise<string> {
     await this.ensureValidSession();
+    const payload = {};
 
     const response = await this.client.rpc(
       this.session!,
       'create_match_rpc',
-      '{}'
+      payload
     );
 
     const data = this.toJson(response.payload);
-    
+
     if (!data.success) {
       throw new Error(data.error || 'Failed to create match');
     }
-    
+
     return data.matchId;
   }
 
@@ -313,7 +314,7 @@ class NakamaService {
       this.currentMatchTicket = null;
       return;
     }
-    
+
     try {
       await this.socket.removeMatchmaker(this.currentMatchTicket);
       console.log('Matchmaking cancelled successfully');
@@ -340,7 +341,7 @@ class NakamaService {
     if (!this.socket) {
       await this.createSocket();
     }
-    
+
     this.currentMatchId = matchId;
     const match = await this.socket!.joinMatch(matchId);
     console.log('Joined match:', match);
@@ -378,45 +379,46 @@ class NakamaService {
 
   async getPlayerStats() {
     await this.ensureValidSession();
-    
-    try {
-        
-        const response = await this.client.rpc(
-            this.session!,
-            'get_player_stats_rpc',
-            '{}'
-        );
-        console.log('Player stats response:', response);
-        return this.toJson(response.payload);
-      
-        
-    } catch (error) {
-        console.error('Player stats fetch failed:', error);
-        throw error;
-    }
-}
 
- 
+    try {
+      const payload = {};
+
+      const response = await this.client.rpc(
+        this.session!,
+        'get_player_stats_rpc',
+        payload
+      );
+      console.log('Player stats response:', response);
+      return this.toJson(response.payload);
+
+
+    } catch (error) {
+      console.error('Player stats fetch failed:', error);
+      throw error;
+    }
+  }
+
+
   async refreshStatsAfterGame(delayMs: number = 1000): Promise<any> {
     await new Promise(resolve => setTimeout(resolve, delayMs));
     return await this.getPlayerStats();
   }
 
-  
+
 
   // logout() {
-    
+
   //   if (this.currentMatchTicket) {
   //     this.cancelMatchmaking().catch(err => 
   //       console.error('Failed to cancel matchmaking on logout:', err)
   //     );
   //   }
-    
+
   //   if (this.socket) {
   //     this.socket.disconnect(false);
   //     this.socket = null;
   //   }
-    
+
   //   this.session = null;
   //   this.currentMatchId = null;
   //   this.currentMatchTicket = null;
@@ -424,7 +426,7 @@ class NakamaService {
   //   this.matchDataCb = null;
   //   this.matchPresenceCb = null;
   //   this.clearStoredSession();
-    
+
   // }
 
   disconnect() {
@@ -451,106 +453,113 @@ class NakamaService {
     return this.currentMatchId !== null;
   }
 
-async getLeaderboard(limit: number = 100) {
-  await this.ensureValidSession();
-  
-  try {
+  async getLeaderboard(limit: number = 100) {
+    await this.ensureValidSession();
+
+    try {
       const leaderboardId = 'tictactoe_wins';
-      
+
       const result = await this.client.listLeaderboardRecords(
-          this.session!,
-          leaderboardId,
-          [],
-          limit
+        this.session!,
+        leaderboardId,
+        [],
+        limit
       );
-      
-      
+
+
       const leaderboard = result.records?.map(record => {
-          const wins = record.score || 0;
-          const totalGames = record.subscore || 0;
-          const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
-          
-          const username = record.username?.value || record.username || 'Unknown';
-          
-          return {
-              userId: record.owner_id,
-              username: username,
-              wins: wins,
-              losses: totalGames - wins, // Calculate losses
-              draws: 0, // If you need this, track in detailed stats
-              totalGames: totalGames,
-              winRate: Math.round(winRate * 100) / 100, // Round to 2 decimals
-              rank: record.rank
-          };
+        const wins = record.score || 0;
+        const totalGames = record.subscore || 0;
+        const winRate = totalGames > 0 ? (wins / totalGames) * 100 : 0;
+
+        const username = record.username || 'Unknown';
+
+        return {
+          userId: record.owner_id,
+          username: username,
+          wins: wins,
+          losses: totalGames - wins, // Calculate losses
+          draws: 0, // If you need this, track in detailed stats
+          totalGames: totalGames,
+          winRate: Math.round(winRate * 100) / 100, // Round to 2 decimals
+          rank: record.rank
+        };
       }) || [];
-      
+
       console.log('Processed leaderboard:', leaderboard);
-      
+
       return { success: true, leaderboard };
-  } catch (error) {
+    } catch (error) {
       console.error('Leaderboard fetch failed:', error);
       throw error;
+    }
   }
-}
 
 
-async getPlayerLeaderboardPosition(numAbove: number = 5, numBelow: number = 5) {
-  await this.ensureValidSession();
-  
-  try {
+  async getPlayerLeaderboardPosition(numAbove: number = 5, numBelow: number = 5) {
+    await this.ensureValidSession();
+
+    try {
       const leaderboardId = 'tictactoe_wins';
-      
-      const result = await this.client.listLeaderboardRecordsAroundOwner(
-          this.session!,
-          leaderboardId,
-          this.session!.user_id,
-          numAbove + numBelow + 1 // Total records to fetch
-      );
-      
-      const playerRecord = result.records?.find(
-          r => r.owner_id === this.session!.user_id
-      );
-      
-      const nearbyPlayers = result.records?.map(record => ({
-          userId: record.owner_id,
-          username: record.username?.value || 'Unknown',
-          wins: record.score,
-          rank: record.rank,
-          isCurrentPlayer: record.owner_id === this.session!.user_id
-      })) || [];
-      
-      return {
-          success: true,
-          rank: playerRecord?.rank || null,
-          wins: playerRecord?.score || 0,
-          nearbyPlayers: nearbyPlayers
-      };
-  } catch (error) {
-      console.error('Player position fetch failed:', error);
-      return { 
-          success: false, 
-          rank: null, 
-          wins: 0,
-          nearbyPlayers: []
-      };
-  }
-}
 
-async getLeaderboardRPC() {
-  await this.ensureValidSession();
-  
-  try {
+      if (!this.session || !this.session.user_id) {
+      // Handle the case when session or user_id is undefined
+      throw new Error('Session or user_id is undefined');
+    }
+
+
+      const result = await this.client.listLeaderboardRecordsAroundOwner(
+        this.session!,
+        leaderboardId,
+        this.session.user_id,
+        numAbove + numBelow + 1 // Total records to fetch
+      );
+
+      const playerRecord = result.records?.find(
+        r => r.owner_id === this.session!.user_id
+      );
+
+      const nearbyPlayers = result.records?.map(record => ({
+        userId: record.owner_id,
+        username: record.username || 'Unknown',
+        wins: record.score,
+        rank: record.rank,
+        isCurrentPlayer: record.owner_id === this.session!.user_id
+      })) || [];
+
+      return {
+        success: true,
+        rank: playerRecord?.rank || null,
+        wins: playerRecord?.score || 0,
+        nearbyPlayers: nearbyPlayers
+      };
+    } catch (error) {
+      console.error('Player position fetch failed:', error);
+      return {
+        success: false,
+        rank: null,
+        wins: 0,
+        nearbyPlayers: []
+      };
+    }
+  }
+
+  async getLeaderboardRPC() {
+    await this.ensureValidSession();
+
+    try {
+      const payload = {}
       const response = await this.client.rpc(
-          this.session!,
-          'get_leaderboard_rpc',
-          '{}'
+        this.session!,
+        'get_leaderboard_rpc',
+        payload
       );
       return this.toJson(response.payload);
-  } catch (error) {
+    } catch (error) {
       console.error('Leaderboard RPC failed:', error);
       throw error;
+    }
   }
-}
 
 
 }

@@ -9,11 +9,10 @@ export const Home = () => {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    // ✅ Check if user already has a valid session
     const checkExistingSession = async () => {
       try {
         if (nakamaService.isAuthenticated()) {
-          console.log('✅ Found existing session, redirecting to menu...');
+          console.log('Found existing session, redirecting to menu...');
           navigate('/menu');
           return;
         }

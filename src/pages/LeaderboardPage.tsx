@@ -21,9 +21,22 @@ export const LeaderboardPage = () => {
       
       if (response.success) {
         console.log('Leaderboard data:', response.leaderboard);
-        setEntries(response.leaderboard);
+        const normalized = (response.leaderboard || [])
+          .filter((i: any) => typeof i.userId === 'string' && i.userId.trim() !== '')
+          .map((item: any) => ({
+            userId: item.userId as string,
+            username: item.username ?? 'Unknown',
+            wins: Number(item.wins ?? 0),
+            losses: Number(item.losses ?? 0),
+            draws: Number(item.draws ?? 0),
+            totalGames: Number(item.totalGames ?? 0),
+            winRate: Number(item.winRate ?? 0),
+            rank: typeof item.rank === 'number' ? item.rank : undefined,
+          })) as LeaderboardEntry[];
+
+        setEntries(normalized);
       } else {
-        console.error('Leaderboard fetch failed:', response.error);
+        console.error('Leaderboard fetch failed:', response);
       }
     } catch (error) {
       console.error('Error fetching leaderboard:', error);
