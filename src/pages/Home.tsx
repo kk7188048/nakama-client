@@ -58,8 +58,8 @@ export const Home = () => {
 
   return (
     <div className="home-page">
-      <h1>Simple Tic-Tac-Toe with Nakama</h1>
-      <p>Multiplayer Game</p>
+      <h1>Tic-Tac-Toe with Nakama</h1>
+      <p>Multiplayer Handling Game</p>
       
       <div className="login-form">
         <input
