@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { nakamaService } from '../services/nakama';
 import { useGameStore } from '../store/gameStore';
