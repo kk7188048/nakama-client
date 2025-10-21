@@ -1,0 +1,432 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif; /* Sleeker, modern font */
+  background: linear-gradient(135deg, #87CEEB 0%, #ADD8E6 100%); /* Sky Blue Gradient */
+  min-height: 100vh;
+}
+
+.app {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 15px;
+}
+
+/* Home Page */
+.home-page {
+  text-align: center;
+  background: white;
+  padding: 55px 35px; /* Slightly increased padding */
+  border-radius: 18px; /* Slightly more rounded corners */
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25); /* Enhanced shadow */
+  max-width: 400px; /* Adjusted max-width */
+  width: 100%;
+}
+
+.home-page h1 {
+  font-size: 2.9rem; /* Adjusted font size */
+  margin-bottom: 10px;
+  color: #364F6B; /* Darker blue for headings */
+  letter-spacing: -0.03em; /* Subtle letter spacing adjustment */
+}
+
+.home-page p {
+  font-size: 1.05rem; /* Adjusted font size */
+  color: #666;
+  margin-bottom: 30px; /* Increased margin */
+}
+
+.login-form {
+  margin-top: 30px;
+}
+
+.login-form input {
+  width: 100%;
+  padding: 14px; /* Slightly increased padding */
+  font-size: 1rem; /* Adjusted font size */
+  border: 1px solid #D9E2EC; /* Very light, subtle border */
+  border-radius: 10px; /* More rounded */
+  margin-bottom: 15px; /* Increased margin */
+  background-color: #F9FAFC; /* Slightly off-white background */
+}
+
+.login-form input:focus {
+  outline: none;
+  border-color: #87CEEB; /* Highlight focus with sky blue */
+  box-shadow: 0 0 0 3px rgba(135, 206, 235, 0.3); /* Soft focus shadow */
+}
+
+.login-form button {
+  width: 100%;
+  padding: 16px; /* Increased padding */
+  font-size: 1.05rem; /* Adjusted font size */
+  background: linear-gradient(135deg, #4682B4 0%, #6A5ACD 100%);
+  color: white;
+  border: none;
+  border-radius: 10px; /* More rounded */
+  cursor: pointer;
+  font-weight: 700; /* Bolder */
+  transition: transform 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.02em; /* Subtle letter spacing */
+}
+
+.login-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Menu Page */
+.menu-page {
+  text-align: center;
+  background: white;
+  padding: 55px 35px;
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+  max-width: 400px;
+  width: 100%;
+}
+
+.menu-page h1 {
+  font-size: 2.5rem; /* Adjusted font size */
+  margin-bottom: 40px;
+  color: #364F6B;
+  letter-spacing: -0.02em;
+}
+
+.menu-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Increased gap */
+}
+
+.primary-btn, .secondary-btn {
+  width: 100%;
+  padding: 18px; /* Increased padding */
+  font-size: 1.05rem; /* Adjusted font size */
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #4682B4 0%, #6A5ACD 100%);
+  color: white;
+}
+
+.secondary-btn {
+  background: #F0F8FF; /* Alice Blue */
+  color: #364F6B; /* Darker text */
+  border: 1px solid #D9E2EC;
+}
+
+.primary-btn:hover, .secondary-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Game Page */
+.game-page {
+  background: white;
+  padding: 40px; /* Adjusted padding */
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+  max-width: 520px; /* Slightly increased max-width */
+  width: 100%;
+}
+
+.player-info {
+  display: flex;
+  justify-content: space-evenly;
+  margin-bottom: 30px;
+}
+
+.player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px; /* Increased padding */
+  border-radius: 10px;
+  background: #F9FAFC; /* Slightly off-white background */
+  flex-basis: 45%;
+}
+
+.player.active {
+  background: linear-gradient(135deg, #4682B4 0%, #6A5ACD 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for active player */
+}
+
+.player-symbol {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+  line-height: 1; /* Ensure symbol doesn't add extra space */
+}
+
+.turn-indicator {
+  font-size: 0.85rem; /* Adjusted font size */
+  margin-top: 5px;
+  font-weight: 500; /* Medium weight */
+}
+
+/* Board */
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px; /* Increased gap */
+  margin: 30px 0;
+}
+
+.game-cell {
+  aspect-ratio: 1;
+  font-size: 3rem;
+  font-weight: 700;
+  border: 2px solid #D9E2EC; /* Light, subtle border */
+  border-radius: 10px;
+  background: white;
+  cursor: pointer;
+  transition: all 0.2s ease-out; /* Smoother transition */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.game-cell:not(:disabled):hover {
+  background: #EAF2F8; /* Lighter blue on hover */
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Added shadow on hover */
+}
+
+.game-cell:disabled {
+  cursor: not-allowed;
+  opacity: 0.7; /* Slightly faded disabled cells */
+}
+
+.cell-X {
+  color: #364F6B; /* Darker blue for X */
+}
+
+.cell-O {
+  color: #6A5ACD; /* Slate Blue for O */
+}
+
+.game-status {
+  text-align: center;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #364F6B;
+  margin-top: 20px;
+}
+
+/* Leaderboard */
+.leaderboard-page {
+  background: white;
+  padding: 40px;
+  border-radius: 18px;
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+  max-width: 850px; /* Slightly increased max-width */
+  width: 100%;
+}
+
+.leaderboard-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px; /* Increased gap */
+  margin-bottom: 25px; /* Increased margin */
+  justify-content: flex-start; /* Aligned buttons to start */
+}
+
+.back-btn, .refresh-btn, .health-btn, .test-btn {
+  padding: 10px 20px;
+  background: #F0F8FF;
+  border: 1px solid #D9E2EC;
+  border-radius: 8px; /* Slightly more rounded */
+  cursor: pointer;
+  font-size: 0.98rem; /* Adjusted font size */
+  transition: all 0.2s;
+  flex-grow: 0; /* Changed to 0 so they don't grow too much */
+  max-width: 160px; /* Adjusted max width */
+  font-weight: 500; /* Medium weight */
+}
+
+.refresh-btn {
+  background: linear-gradient(135deg, #4682B4 0%, #6A5ACD 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+.health-btn {
+  background: linear-gradient(135deg, #3CB371 0%, #2E8B57 100%); /* Medium Sea Green to Sea Green */
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+.test-btn {
+  background: linear-gradient(135deg, #FF69B4 0%, #FF1493 100%); /* Hot Pink to Deep Pink */
+  color: white;
+  border: none;
+  font-weight: 600;
+}
+
+.refresh-btn:hover, .health-btn:hover, .test-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.back-btn:hover {
+  background: #EAF2F8; /* Lighter blue on hover */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.refresh-btn:disabled, .health-btn:disabled, .test-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.leaderboard h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #364F6B;
+  font-size: 2.2rem; /* Adjusted font size */
+  letter-spacing: -0.02em;
+}
+
+.leaderboard table {
+  width: 100%;
+  border-collapse: separate; /* Use separate for rounded corners on cells */
+  border-spacing: 0;
+  border-radius: 8px; /* Rounded corners for the whole table */
+  overflow: hidden; /* Ensures corners are clipped */
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 16px; /* Increased padding */
+  text-align: left;
+  border-bottom: 1px solid #F0F4F8; /* Lighter, more subtle border */
+}
+
+.leaderboard th {
+  background: linear-gradient(135deg, #4682B4 0%, #6A5ACD 100%);
+  color: white;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 1; /* Keep header visible on scroll */
+}
+
+.leaderboard tr:first-child th:first-child { border-top-left-radius: 8px; }
+.leaderboard tr:first-child th:last-child { border-top-right-radius: 8px; }
+.leaderboard tr:last-child td:first-child { border-bottom-left-radius: 8px; }
+.leaderboard tr:last-child td:last-child { border-bottom-right-radius: 8px; }
+
+
+.leaderboard tr:nth-child(even) {
+  background: #F9FAFC; /* Ghost White for even rows */
+}
+
+.leaderboard tr:hover {
+  background: #EAF2F8; /* Lighter blue on hover */
+}
+
+/* Loader */
+.loader {
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #364F6B; /* Darker blue for loader top */
+  border-radius: 50%;
+  width: 48px; /* Slightly larger */
+  height: 48px; /* Slightly larger */
+  animation: spin 0.8s linear infinite; /* Slightly faster spin */
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) { /* Increased breakpoint for tablets */
+  .home-page, .menu-page, .game-page, .leaderboard-page {
+    padding: 35px 25px;
+    border-radius: 15px;
+  }
+
+  .home-page h1, .menu-page h1 {
+    font-size: 2.4rem;
+  }
+
+  .game-page h1 {
+    font-size: 2.1rem;
+  }
+
+  .login-form input, .login-form button, .primary-btn, .secondary-btn {
+    font-size: 0.95rem;
+    padding: 13px;
+  }
+
+  .player-symbol {
+    font-size: 1.7rem;
+  }
+
+  .game-cell {
+    font-size: 2.5rem;
+  }
+
+  .leaderboard th, .leaderboard td {
+    padding: 14px;
+    font-size: 0.9rem;
+  }
+
+  .leaderboard-header {
+    flex-direction: row; /* Keep row layout but allow wrap */
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .back-btn, .refresh-btn, .health-btn, .test-btn {
+    flex-basis: calc(50% - 4px); /* Two buttons per row */
+    max-width: none; /* Let them expand */
+  }
+}
+
+@media (max-width: 500px) { /* Smaller phones */
+  .home-page, .menu-page, .game-page, .leaderboard-page {
+    padding: 25px 15px;
+  }
+
+  .home-page h1, .menu-page h1 {
+    font-size: 2rem;
+  }
+
+  .game-cell {
+    font-size: 2.1rem;
+  }
+
+  .leaderboard-header {
+    flex-direction: column; /* Stack buttons vertically */
+    align-items: stretch;
+  }
+
+  .back-btn, .refresh-btn, .health-btn, .test-btn {
+    flex-basis: 100%;
+  }
+
+  .leaderboard th, .leaderboard td {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+}
