@@ -58,7 +58,7 @@ export const Home = () => {
 
   return (
     <div className="home-page">
-      <h1>🎮 Tic-Tac-Toe</h1>
+      <h1>Simple Tic-Tac-Toe with Nakama</h1>
       <p>Multiplayer Game</p>
       
       <div className="login-form">
